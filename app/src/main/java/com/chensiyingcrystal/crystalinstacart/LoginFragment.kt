@@ -25,7 +25,7 @@ import javax.inject.Inject
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 @AndroidEntryPoint
-class LoginFragment :  Fragment() {
+class LoginFragment : Fragment() {
 
   @Inject lateinit var firebaseConnect: FirebaseConnect
   private var _binding: LoginFragmentBinding? = null
@@ -36,7 +36,7 @@ class LoginFragment :  Fragment() {
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ): View? {
 
     _binding = LoginFragmentBinding.inflate(inflater, container, false)
@@ -50,12 +50,12 @@ class LoginFragment :  Fragment() {
     super.onViewCreated(view, savedInstanceState)
 
     binding.btnRegister.setOnClickListener {
-      Log.i("LoginFragment","Register onClick")
+      Log.i("LoginFragment", "Register onClick")
       showRegisterDialog()
     }
 
     binding.btnSignIn.setOnClickListener {
-      Log.i("LoginFragment","SignIn onClick")
+      Log.i("LoginFragment", "SignIn onClick")
       showLoginDialog()
     }
   }
@@ -111,12 +111,16 @@ class LoginFragment :  Fragment() {
                             "Register new User successfully",
                             Snackbar.LENGTH_SHORT).show()
             } else {
-              Snackbar.make(binding.loginFragment, "Register new User failed due to " + result?.exceptionMessage, Snackbar.LENGTH_SHORT).show()
+              Snackbar.make(binding.loginFragment,
+                            "Register new User failed due to " + result?.exceptionMessage,
+                            Snackbar.LENGTH_SHORT).show()
             }
           }
 
           override fun onFailure(t: Throwable) {
-              Snackbar.make(binding.loginFragment, "Register new User failed in Firebase connection", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.loginFragment,
+                          "Register new User failed in Firebase connection",
+                          Snackbar.LENGTH_SHORT).show()
           }
         },
         // causes the callbacks to be executed on the main (UI) thread
@@ -144,7 +148,8 @@ class LoginFragment :  Fragment() {
       dialogInterface.dismiss()
 
       if (TextUtils.isEmpty(email)) {
-        Snackbar.make(binding.loginFragment, "Please enter email address", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.loginFragment, "Please enter email address", Snackbar.LENGTH_SHORT)
+          .show()
         return@setPositiveButton
       }
       Futures.addCallback(
@@ -156,12 +161,16 @@ class LoginFragment :  Fragment() {
                             "SignIn successfully",
                             Snackbar.LENGTH_SHORT).show()
             } else {
-              Snackbar.make(binding.loginFragment, "SignIn failed due to " + result?.exceptionMessage, Snackbar.LENGTH_SHORT).show()
+              Snackbar.make(binding.loginFragment,
+                            "SignIn failed due to " + result?.exceptionMessage,
+                            Snackbar.LENGTH_SHORT).show()
             }
           }
 
           override fun onFailure(t: Throwable) {
-            Snackbar.make(binding.loginFragment, "SignIn failed in Firebase connection", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.loginFragment,
+                          "SignIn failed in Firebase connection",
+                          Snackbar.LENGTH_SHORT).show()
           }
         },
         // causes the callbacks to be executed on the main (UI) thread
