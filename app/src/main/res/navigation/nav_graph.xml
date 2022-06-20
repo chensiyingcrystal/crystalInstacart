@@ -7,8 +7,18 @@
 
   <fragment
       android:id="@+id/LoginFragment"
-      android:name="com.chensiyingcrystal.crystalinstacart.LoginFragment"
+      android:name="com.chensiyingcrystal.crystalinstacart.login.LoginFragment"
       android:label="@string/login_fragment_label"
       tools:layout="@layout/login_fragment">
+    <action
+        android:id="@+id/action_LoginFragment_to_HomeFragment"
+        app:destination="@id/HomeFragment" />
+  </fragment>
+
+  <fragment
+      android:id="@+id/HomeFragment"
+      android:name="com.chensiyingcrystal.crystalinstacart.home.HomeFragment"
+      android:label="@string/home_fragment_label"
+      tools:layout="@layout/home_fragment">
   </fragment>
 </navigation>

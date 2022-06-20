@@ -1,22 +1,36 @@
 package com.chensiyingcrystal.crystalinstacart.firebase
 
+import android.content.DialogInterface
+import android.location.Location
 import android.util.Log
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import com.chensiyingcrystal.crystalinstacart.user.User
+import com.firebase.geofire.GeoFire
+import com.firebase.geofire.GeoFire.CompletionListener
+import com.firebase.geofire.GeoLocation
+import com.google.common.util.concurrent.FluentFuture
+import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import java.util.concurrent.Future
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FirebaseConnectImpl @Inject constructor() :
   FirebaseConnect {
-  private var auth: FirebaseAuth
+  private val auth: FirebaseAuth
   private val db: FirebaseDatabase
+  private val geoFireDriver : GeoFire
+  private val geoFireUser: GeoFire
 
   init {
     auth = FirebaseAuth.getInstance()
     db = FirebaseDatabase.getInstance()
-
+    geoFireDriver = GeoFire(db.getReference("Drivers"))
+    geoFireUser  = GeoFire(db.getReference("Users"))
   }
 
   override fun registerNewUser(user: User): ListenableFuture<FirebaseConnectResult> {
@@ -57,5 +71,27 @@ class FirebaseConnectImpl @Inject constructor() :
         }
       }
     return signInFuture
+  }
+
+  override fun updateLocation(location: Location, isDriver: Boolean): ListenableFuture<Boolean> {
+    Log.d("FirebaseConnect", "updateLocation")
+    val geoFire = if (isDriver) { geoFireDriver } else { geoFireUser }
+    val updateLocationFuture =
+      CallbackToFutureAdapter.getFuture { completer: CallbackToFutureAdapter.Completer<Boolean> ->
+        geoFire.setLocation(
+          auth.currentUser!!.uid,
+          GeoLocation(location.latitude, location.longitude),
+          { key: String, error: DatabaseError ->
+            if (error != null) {
+              Log.w("FirebaseConnect", "updateLocation failed")
+              completer.set(false)
+            } else {
+              Log.w("FirebaseConnect", "updateLocation success")
+              completer.set(true)
+            }
+          }
+        )
+      }
+    return updateLocationFuture
   }
 }

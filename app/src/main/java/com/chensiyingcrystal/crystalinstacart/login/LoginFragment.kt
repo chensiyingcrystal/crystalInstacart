@@ -1,7 +1,8 @@
-package com.chensiyingcrystal.crystalinstacart
+package com.chensiyingcrystal.crystalinstacart.login
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -9,20 +10,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import com.chensiyingcrystal.crystalinstacart.R
 import com.chensiyingcrystal.crystalinstacart.databinding.LoginFragmentBinding
 import com.chensiyingcrystal.crystalinstacart.firebase.FirebaseConnect
 import com.chensiyingcrystal.crystalinstacart.firebase.FirebaseConnectResult
+import com.chensiyingcrystal.crystalinstacart.home.HomeMapActivity
 import com.chensiyingcrystal.crystalinstacart.user.User
 import com.google.android.material.snackbar.Snackbar
 import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
 import com.rengwuxian.materialedittext.MaterialEditText
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.concurrent.Future
 import javax.inject.Inject
 
 /**
- * A simple [Fragment] subclass as the default destination in the navigation.
+ * The login/register Fragment
  */
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -146,6 +149,8 @@ class LoginFragment : Fragment() {
       val email = editEmail.text.toString()
       val password = editPassword.text.toString()
       dialogInterface.dismiss()
+      binding.btnSignIn.setEnabled(false)
+      binding.btnRegister.setEnabled(false)
 
       if (TextUtils.isEmpty(email)) {
         Snackbar.make(binding.loginFragment, "Please enter email address", Snackbar.LENGTH_SHORT)
@@ -160,10 +165,16 @@ class LoginFragment : Fragment() {
               Snackbar.make(binding.loginFragment,
                             "SignIn successfully",
                             Snackbar.LENGTH_SHORT).show()
+              // findNavController().navigate(R.id.action_LoginFragment_to_HomeFragment)
+              startActivity(Intent(context, HomeMapActivity::class.java))
+              activity!!.finish()
             } else {
               Snackbar.make(binding.loginFragment,
                             "SignIn failed due to " + result?.exceptionMessage,
                             Snackbar.LENGTH_SHORT).show()
+
+              binding.btnSignIn.setEnabled(true)
+              binding.btnRegister.setEnabled(true)
             }
           }
 
@@ -171,6 +182,8 @@ class LoginFragment : Fragment() {
             Snackbar.make(binding.loginFragment,
                           "SignIn failed in Firebase connection",
                           Snackbar.LENGTH_SHORT).show()
+            binding.btnSignIn.setEnabled(true)
+            binding.btnRegister.setEnabled(true)
           }
         },
         // causes the callbacks to be executed on the main (UI) thread
