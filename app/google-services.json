@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "18311645141",
+    "project_id": "crystalinstacart-3d596",
+    "storage_bucket": "crystalinstacart-3d596.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18311645141:android:8b2e49222a6843c1309f5c",
+        "android_client_info": {
+          "package_name": "com.chensiyingcrystal.crystalinstacart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18311645141-hjr5m3fqa0576diqi03llkf7saepud5k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chensiyingcrystal.crystalinstacart",
+            "certificate_hash": "d3199128b56d601b8f5ec8a246fcafa6371349c1"
+          }
+        },
+        {
+          "client_id": "18311645141-iemg51dd8l0ckck4ejs42r9r8tqa325o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZIeFI-Pus_cStCxjnAjZ9X_qa-MaFPoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18311645141-iemg51dd8l0ckck4ejs42r9r8tqa325o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
