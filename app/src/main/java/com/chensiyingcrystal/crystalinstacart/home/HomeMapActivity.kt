@@ -1,23 +1,20 @@
 package com.chensiyingcrystal.crystalinstacart.home
 
 import android.graphics.Color
-import android.graphics.Interpolator
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.animation.LinearInterpolator
+import androidx.appcompat.app.AppCompatActivity
 import com.chensiyingcrystal.crystalinstacart.R
 import com.chensiyingcrystal.crystalinstacart.databinding.ActivityHomeMapBinding
 import com.chensiyingcrystal.crystalinstacart.firebase.FirebaseConnect
 import com.chensiyingcrystal.crystalinstacart.location.LocationController
-import com.chensiyingcrystal.crystalinstacart.retrofit.RetrofitClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -35,8 +32,6 @@ import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import org.json.JSONArray
-import org.json.JSONObject
 
 @AndroidEntryPoint
 class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {

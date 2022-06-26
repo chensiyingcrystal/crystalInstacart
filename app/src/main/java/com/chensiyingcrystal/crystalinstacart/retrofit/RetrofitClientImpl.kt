@@ -1,9 +1,5 @@
 package com.chensiyingcrystal.crystalinstacart.retrofit
 
-import com.chensiyingcrystal.crystalinstacart.firebase.FirebaseConnect
-import com.firebase.geofire.GeoFire
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import javax.inject.Inject
 import javax.inject.Singleton
 import retrofit2.Retrofit

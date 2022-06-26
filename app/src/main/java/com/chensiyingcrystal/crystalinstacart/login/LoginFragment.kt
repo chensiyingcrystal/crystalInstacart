@@ -6,11 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import com.chensiyingcrystal.crystalinstacart.R
 import com.chensiyingcrystal.crystalinstacart.databinding.LoginFragmentBinding
 import com.chensiyingcrystal.crystalinstacart.firebase.FirebaseConnect

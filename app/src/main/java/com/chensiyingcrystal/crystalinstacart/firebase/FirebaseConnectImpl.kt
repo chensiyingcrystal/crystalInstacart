@@ -1,20 +1,15 @@
 package com.chensiyingcrystal.crystalinstacart.firebase
 
-import android.content.DialogInterface
 import android.location.Location
 import android.util.Log
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import com.chensiyingcrystal.crystalinstacart.user.User
 import com.firebase.geofire.GeoFire
-import com.firebase.geofire.GeoFire.CompletionListener
 import com.firebase.geofire.GeoLocation
-import com.google.common.util.concurrent.FluentFuture
-import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import java.util.concurrent.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,25 +1,20 @@
 package com.chensiyingcrystal.crystalinstacart.location
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import com.chensiyingcrystal.crystalinstacart.R
-import com.chensiyingcrystal.crystalinstacart.firebase.FirebaseConnectResult
 import com.chensiyingcrystal.crystalinstacart.permission.PermissionChecker
 import com.chensiyingcrystal.crystalinstacart.retrofit.RetrofitClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
