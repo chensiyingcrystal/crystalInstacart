@@ -76,14 +76,9 @@ class FirebaseConnectImpl @Inject constructor() :
         geoFire.setLocation(
           auth.currentUser!!.uid,
           GeoLocation(location.latitude, location.longitude),
-          { key: String, error: DatabaseError ->
-            if (error != null) {
-              Log.w("FirebaseConnect", "updateLocation failed")
-              completer.set(false)
-            } else {
-              Log.w("FirebaseConnect", "updateLocation success")
-              completer.set(true)
-            }
+          { _, error: DatabaseError ->
+            Log.w("FirebaseConnect", "updateLocation failed")
+            completer.set(false)
           }
         )
       }

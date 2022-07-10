@@ -1,5 +1,6 @@
 package com.chensiyingcrystal.crystalinstacart.home
 
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -43,14 +45,7 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
   private var currentMarker: Marker? = null
   private var lastLocation: Location? = null
   private lateinit var locationCallback: LocationCallback
-  private lateinit var polylineOptions: PolylineOptions
-  private lateinit var blackPolylineOptions: PolylineOptions
-  private lateinit var blackPolyline: Polyline
-  private lateinit var greyPolyline: Polyline
-  private var polylineList: List<LatLng> = ArrayList()
   private lateinit var destination: String
-  private lateinit var startPosition: LatLng
-  private lateinit var endPosition: LatLng
   private lateinit var currentPosition: LatLng
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,34 +121,9 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
     currentMarker?.remove()
     val latLng = LatLng(location.latitude, location.longitude)
     currentMarker =
-      map.addMarker(MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.car_logo))
+      map.addMarker(MarkerOptions()
                       .position(latLng).title("Yourself"))
     map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
-    rotateMarker()
-  }
-
-  private fun rotateMarker() {
-    val handler = Handler(Looper.getMainLooper())
-    val start = SystemClock.uptimeMillis()
-    val startRoation = currentMarker!!.rotation
-    val duration = 1500
-    val interpolator = LinearInterpolator()
-    handler.post(object : Runnable {
-      override fun run() {
-        val elapsed = SystemClock.uptimeMillis() - start
-        val t = interpolator.getInterpolation(elapsed.toFloat() / duration)
-        val rot = t * (-360) + (1 - t) * startRoation
-        val changeRot = if (-rot > 180) {
-          rot / 2
-        } else {
-          rot
-        }
-        currentMarker!!.setRotation(changeRot)
-        if (t < 1.0) {
-          handler.postDelayed(this, 16)
-        }
-      }
-    })
   }
 
   private fun getDirection() {
@@ -161,6 +131,7 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
       Log.d("HomeMapActivity", "Can't locate the current position")
       return
     }
+    currentPosition = LatLng(lastLocation!!.latitude, lastLocation!!.longitude)
     Futures.addCallback(
       locationController.getDirection(lastLocation!!, destination),
       object : FutureCallback<List<LatLng>> {
@@ -169,23 +140,8 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.d("HomeMapActivity", "Can't find the polylines")
             return
           }
-          Log.d("HomeMapActivity", "Polylines size " + polylineList.size)
-          val latLngBoundsBuilder = LatLngBounds.builder()
-          for (latLng in polylineList) {
-            latLngBoundsBuilder.include(latLng)
-          }
-          val latLngBounds = latLngBoundsBuilder.build()
-          map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 2))
-          val greyPolylineOptions =
-            PolylineOptions().color(Color.GRAY).width(5.0f).startCap(SquareCap()).endCap(SquareCap()).jointType(JointType.ROUND).addAll(polylineList)
-          val greyPolyline = map.addPolyline(greyPolylineOptions)
-
-          val blackPolylineOptions =
-            PolylineOptions().color(Color.BLACK).width(5.0f).startCap(SquareCap()).endCap(SquareCap()).jointType(JointType.ROUND)
-          val blackPolyline = map.addPolyline(blackPolylineOptions)
-
-          map.addMarker(MarkerOptions().position(polylineList.get(polylineList.size-1)).title("Pickup Location"))
-
+          drawRoute(polylineList)
+          drawMovingCar(polylineList)
         }
 
         override fun onFailure(t: Throwable) {
@@ -194,5 +150,103 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
       },
       // causes the callbacks to be executed on the main (UI) thread
       this.mainExecutor)
+  }
+
+  private fun drawRoute(polylineList: List<LatLng>) {
+    Log.d("HomeMapActivity", "Polylines size " + polylineList.size)
+    val latLngBoundsBuilder = LatLngBounds.builder()
+    for (latLng in polylineList) {
+      latLngBoundsBuilder.include(latLng)
+    }
+    val latLngBounds = latLngBoundsBuilder.build()
+    map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 2))
+    val greyPolylineOptions =
+      PolylineOptions().color(Color.GRAY).width(5.0f).startCap(SquareCap()).endCap(SquareCap()).jointType(JointType.ROUND).addAll(polylineList)
+    val greyPolyline = map.addPolyline(greyPolylineOptions)
+
+    val blackPolylineOptions =
+      PolylineOptions().color(Color.BLACK).width(5.0f).startCap(SquareCap()).endCap(SquareCap()).jointType(JointType.ROUND)
+    val blackPolyline = map.addPolyline(blackPolylineOptions)
+
+    val pickupLatLng = polylineList.get(polylineList.size-1)
+    map.addMarker(MarkerOptions().position(pickupLatLng).title("Pickup Location"))
+
+    // Animation
+    val polyLineAnimator = ValueAnimator.ofInt(0, 100)
+    polyLineAnimator.duration = 2000
+    polyLineAnimator.interpolator = LinearInterpolator()
+    polyLineAnimator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {
+      override fun onAnimationUpdate(animation: ValueAnimator) {
+        val points = greyPolyline.points
+        val percentValue = animation.animatedValue.toString().toInt()
+        val size = points.size
+        val newPointSize = (size * percentValue/100.0f).toInt()
+        val p = points.subList(0, newPointSize)
+        blackPolyline.points = p
+      }
+    })
+    polyLineAnimator.start()
+
+  }
+
+  private fun drawMovingCar(polylineList: List<LatLng>) {
+    currentMarker = map.addMarker(MarkerOptions().position(currentPosition).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.car_logo)) )
+
+    val handler = Handler(Looper.getMainLooper())
+    var index = -1
+    var next = 0
+    val polylineSize = polylineList.size
+    var startPosition: LatLng? = null
+    var endPosition: LatLng? = null
+    handler.postDelayed(object : Runnable {
+      override fun run() {
+        Log.d("HomeMapActivity", "drawMovingCar")
+
+        if (index < polylineSize -1) {
+          index++
+          next = index+1
+        }
+        if (index < polylineSize -1) {
+          startPosition = polylineList.get(index)
+          endPosition = polylineList.get(next)
+        }
+        var valueAnimator = ValueAnimator.ofFloat(0f, 1f)
+        valueAnimator.duration = 3000
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.addUpdateListener { animation ->
+          val v = animation.animatedFraction
+          Log.d("HomeMapActivity", "drawMovingCar animation " + v)
+          val lng = v* endPosition!!.longitude + (1-v)*startPosition!!.longitude
+          val lat = v*endPosition!!.latitude + (1-v)*startPosition!!.latitude
+          val newPos = LatLng(lat, lng)
+          currentMarker!!.position = newPos
+          currentMarker!!.setAnchor(0.5f, 0.5f)
+          currentMarker!!.rotation = bearing(startPosition!!, endPosition!!)
+          map.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.builder()
+                                                                 .target(newPos)
+                                                                 .zoom(15f)
+                                                                 .build()))
+
+        }
+        valueAnimator.start()
+        handler.postDelayed(this, 3000)
+      }
+    }, 3000)
+
+  }
+
+  private fun bearing(startPosition: LatLng, endPosition: LatLng): Float {
+    val lat = Math.abs(startPosition.latitude - endPosition.latitude)
+    val lng = Math.abs(startPosition.longitude - endPosition.longitude)
+    if (startPosition.latitude < endPosition.latitude && startPosition.longitude < endPosition.longitude) {
+      return Math.toDegrees(Math.atan(lng/lat)).toFloat()
+    }
+    if (startPosition.latitude >= endPosition.latitude && startPosition.longitude < endPosition.longitude) {
+      return 180 - Math.toDegrees(Math.atan(lng/lat)).toFloat()
+    }
+    if (startPosition.latitude < endPosition.latitude && startPosition.longitude < endPosition.longitude) {
+      return Math.toDegrees(Math.atan(lng/lat)).toFloat() + 180
+    }
+    return 360- Math.toDegrees(Math.atan(lng/lat)).toFloat()
   }
 }
