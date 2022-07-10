@@ -1,6 +1,7 @@
 package com.chensiyingcrystal.crystalinstacart.home
 
 import android.animation.ValueAnimator
+import android.content.Context
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
@@ -14,6 +15,7 @@ import com.chensiyingcrystal.crystalinstacart.R
 import com.chensiyingcrystal.crystalinstacart.databinding.ActivityHomeMapBinding
 import com.chensiyingcrystal.crystalinstacart.firebase.FirebaseConnect
 import com.chensiyingcrystal.crystalinstacart.location.LocationController
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,15 +32,22 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.SquareCap
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
   @Inject lateinit var locationController: LocationController
   @Inject lateinit var firebaseConnect: FirebaseConnect
+  @Inject @ApplicationContext lateinit var context: Context
 
   private lateinit var map: GoogleMap
   private lateinit var binding: ActivityHomeMapBinding
@@ -66,11 +75,27 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
       }
     }
 
-    binding.btnGo.setOnClickListener {
-      destination = binding.edtPlace.text.toString().replace(" ", "+")
-      Log.d("HomeMapActivity", "Get new destination " + destination)
-      getDirection()
-    }
+    Places.initialize(context, context.resources.getString(R.string.google_place_api), Locale.US);
+    // Initialize the AutocompleteSupportFragment.
+    val autocompleteFragment =
+      supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
+        as AutocompleteSupportFragment
+
+    // Specify the types of place data to return.
+    autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
+
+    // Set up a PlaceSelectionListener to handle the response.
+    autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+      override fun onPlaceSelected(place: Place) {
+        Log.i("HomeMapActivity", "Place: ${place.name}, ${place.id}")
+        destination = place.name!!
+        getDirection()
+      }
+
+      override fun onError(status: Status) {
+        Log.i("HomeMapActivity", "An error occurred: $status")
+      }
+    })
   }
 
   /**
@@ -127,6 +152,7 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
   }
 
   private fun getDirection() {
+    Log.d("HomeMapActivity", "Get direction")
     if (lastLocation == null) {
       Log.d("HomeMapActivity", "Can't locate the current position")
       return

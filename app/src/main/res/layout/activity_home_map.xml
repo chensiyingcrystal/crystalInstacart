@@ -11,20 +11,11 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
     android:orientation="horizontal">
-    <EditText
+    <fragment android:id="@+id/autocomplete_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-      android:layout_weight="1"
-      android:hint="Enter Pickup Location"
-      android:id="@+id/edt_place"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-      android:layout_weight="5"
-      android:text="GO"
-      android:id="@+id/btn_go"/>
-
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        />
   </LinearLayout>
 
   <fragment
