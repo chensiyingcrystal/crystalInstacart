@@ -1,6 +1,7 @@
 package com.chensiyingcrystal.crystalinstacart.location
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.util.Log
@@ -47,8 +48,7 @@ class LocationControllerImpl @Inject constructor(
       Log.w("LocationController","No location permission")
       return
     }
-    fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback,
-    null)
+    fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
   }
 
   override fun stopLocationUpdate(locationCallback: LocationCallback) {

@@ -171,6 +171,10 @@ class LoginFragment : Fragment() {
               Snackbar.make(binding.loginFragment,
                             "SignIn failed due to " + result?.exceptionMessage,
                             Snackbar.LENGTH_SHORT).show()
+              var err = result?.exceptionMessage
+              if (err != null) {
+                Log.e("error message", err)
+              }
 
               binding.btnSignIn.setEnabled(true)
               binding.btnRegister.setEnabled(true)

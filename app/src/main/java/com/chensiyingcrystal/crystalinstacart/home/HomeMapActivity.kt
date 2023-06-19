@@ -116,7 +116,9 @@ class HomeMapActivity : AppCompatActivity(), OnMapReadyCallback {
     map.setBuildingsEnabled(false)
     map.uiSettings.setZoomControlsEnabled(true)
 
+    //this location callback is based on location request(update location having intervals)
     locationController.startLocationUpdate(locationCallback)
+    //update location right now
     updateLocation()
   }
 

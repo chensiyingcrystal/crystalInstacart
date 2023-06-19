@@ -1,6 +1,7 @@
 package com.chensiyingcrystal.crystalinstacart
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
   override fun onSupportNavigateUp(): Boolean {
     val navController = findNavController(R.id.nav_host_fragment_content_main)
+    //controller support or system enabled
     return navController.navigateUp(appBarConfiguration)
       || super.onSupportNavigateUp()
   }
