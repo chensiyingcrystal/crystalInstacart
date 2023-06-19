@@ -3,11 +3,6 @@ An android mobile app implementing part of the instacart driver app features.
 
 ## Screenshots
 
-<div>
-    <img align=top src="screenshots/screenshot1.png" width=50% height=50%/>
-    <img align=top src="screenshots/screenshot2.png" width=50% height=50%/>
-<div>
-
 <p float="left">
 <img src="screenshots/screenshot1.png" width=50% height=50% />
 <img src="screenshots/screenshot2.png" width=50% height=50% />
