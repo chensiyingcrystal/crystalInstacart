@@ -3,11 +3,16 @@ An android mobile app implementing part of the instacart driver app features.
 
 ## Screenshots
 
+<p float="left">
 <img src="screenshots/screenshot1.png" width=50% height=50% />
-<img src="screenshots/screenshot2.png"/>
-<img src="screenshots/screenshot3.png"/>
-<img src="screenshots/screenshot4.png"/>
-<img src="screenshots/screenshot5.png"/>
+<img src="screenshots/screenshot2.png" width=50% height=50% />
+</p>
+
+<p float="left">
+<img src="screenshots/screenshot3.png" width=50% height=50% />
+<img src="screenshots/screenshot4.png" width=50% height=50% />
+<img src="screenshots/screenshot5.png" width=50% height=50% />
+</p>
 
 ## Features
 Key functionalities include:
